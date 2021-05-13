@@ -31,6 +31,10 @@ pub fn run(path: &Path) -> Result<(), String> {
     let mut index = 0;
     let mut pics: Vec<PathBuf> = get_pics_paths(path)?;
 
+    let mut del = PathBuf::from(path);
+    del.push("del");
+    fs::create_dir_all(del.as_path()).map_err(|e| e.to_string())?;
+
     let mut gui_context = gui::GuiContext::new()?;
 
     gui_context.render_pic(pics[index].as_path())?;
@@ -47,7 +51,13 @@ pub fn run(path: &Path) -> Result<(), String> {
                 Event::KeyDown { keycode: Option::Some(Keycode::Left), .. }
                 => index = index + pics.len() - 1,
                 Event::KeyDown { keycode: Option::Some(Keycode::Space), .. }
-                => { pics.remove(index); }
+                => {
+                    let name = pics[index].file_name().expect("TODO");
+                    let mut new = del.to_path_buf();
+                    new.push(name);
+                    fs::rename(pics[index].as_path(), new).map_err(|e| e.to_string())?;
+                    pics.remove(index);
+                }
                 _ => {}
             }
             if pics.len() < 1 {
