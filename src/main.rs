@@ -30,13 +30,7 @@ pub fn run(path: &Path) -> Result<(), String> {
                 Event::KeyDown { keycode: Option::Some(Keycode::Left), .. }
                 => storage.prev(),
                 Event::KeyDown { keycode: Option::Some(Keycode::Space), .. }
-                => {
-                    let name = storage.get().file_name().expect("TODO");
-                    let mut new = del.to_path_buf();
-                    new.push(name);
-                    fs::rename(storage.get().as_path(), new).map_err(|e| e.to_string())?;
-                    storage.remove();
-                }
+                => storage.mv(del.as_path()),
                 _ => {}
             }
             if storage.is_empty() {
