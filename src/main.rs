@@ -29,7 +29,7 @@ fn get_pics_paths(path: &Path) -> Result<Vec<PathBuf>, String> {
 
 pub fn run(path: &Path) -> Result<(), String> {
     let mut index = 0;
-    let pics: Vec<PathBuf> = get_pics_paths(path)?;
+    let mut pics: Vec<PathBuf> = get_pics_paths(path)?;
 
     let mut gui_context = gui::GuiContext::new()?;
 
@@ -39,30 +39,22 @@ pub fn run(path: &Path) -> Result<(), String> {
         for event in gui_context.sdl_context.event_pump()?.poll_iter() {
             match event {
                 Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Option::Some(Keycode::Escape),
-                    ..
-                }
-                | Event::KeyDown {
-                    keycode: Option::Some(Keycode::Q),
-                    ..
-                } => break 'mainloop,
-                Event::KeyDown {
-                    keycode: Option::Some(Keycode::Right),
-                    ..
-                } => {
-                    index = (index + 1) % pics.len();
-                    gui_context.render_pic(pics[index].as_path())?;
-                }
-                Event::KeyDown {
-                    keycode: Option::Some(Keycode::Left),
-                    ..
-                } => {
-                    index = (index + pics.len() - 1) % pics.len();
-                    gui_context.render_pic(pics[index].as_path())?;
-                }
+                | Event::KeyDown { keycode: Option::Some(Keycode::Escape), .. }
+                | Event::KeyDown { keycode: Option::Some(Keycode::Q), .. }
+                => break 'mainloop,
+                Event::KeyDown { keycode: Option::Some(Keycode::Right), .. }
+                => index = index + 1,
+                Event::KeyDown { keycode: Option::Some(Keycode::Left), .. }
+                => index = index + pics.len() - 1,
+                Event::KeyDown { keycode: Option::Some(Keycode::Space), .. }
+                => { pics.remove(index); }
                 _ => {}
             }
+            if pics.len() < 1 {
+                return Err("No images".to_string());
+            }
+            index = index % pics.len();
+            gui_context.render_pic(pics[index].as_path())?;
         }
     }
 
