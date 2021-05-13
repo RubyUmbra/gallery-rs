@@ -49,17 +49,37 @@ impl GuiContext {
         let texture = self.texture_creator.load_texture(path)?;
         let img_sz = imagesize::size(path)
             .map_err(|e| e.to_string())?;
-        let mut dst = Rect::new(0, 0, img_sz.width as u32, img_sz.height as u32);
-        if self.display_bounds.width() < img_sz.width as u32 {
-            let coeff = self.display_bounds.width() as f32 / img_sz.width as f32;
-            dst = Rect::new(0, 0, (img_sz.width as f32 * coeff) as u32, (img_sz.height as f32 * coeff) as u32);
+
+        let mut img = Rect::new(0, 0, img_sz.width as u32, img_sz.height as u32);
+        let dx = self.display_bounds.width() as u32;
+        let dy = self.display_bounds.height() as u32;
+        if dx < img.width() && dy < img.height() || dx > img.width() && dy > img.height() {
+            let new_width = (img.width() * dy / img.height()) as u32;
+            let new_height = (img.height() * dx / img.width()) as u32;
+            if new_height < dy {
+                img.set_width(dx as u32);
+                img.set_height(new_height);
+            } else {
+                img.set_width(new_width);
+                img.set_height(dy as u32);
+            }
+        } else if dx < img.width() && dy > img.height() {
+            let new_height = (img.height() * dx / img.width()) as u32;
+            img.set_width(dx as u32);
+            img.set_height(new_height);
+        } else if dx > img.width() && dy < img.height() {
+            let new_width = (img.width() * dy / img.height()) as u32;
+            img.set_width(new_width);
+            img.set_height(dy as u32);
         }
-        if self.display_bounds.height() < img_sz.height as u32 {
-            let coeff = self.display_bounds.height() as f32 / img_sz.height as f32;
-            dst = Rect::new(0, 0, (img_sz.width as f32 * coeff) as u32, (img_sz.height as f32 * coeff) as u32);
-        }
+
+        let x_pad = (dx - img.width()) / 2;
+        let y_pad = (dy - img.height()) / 2;
+        img.set_x(x_pad as i32);
+        img.set_y(y_pad as i32);
+
         self.canvas.clear();
-        self.canvas.copy(&texture, None, dst)?;
+        self.canvas.copy(&texture, None, img)?;
         self.canvas.present();
 
         Ok(())
