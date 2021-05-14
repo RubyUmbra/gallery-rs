@@ -1,5 +1,6 @@
 use std::path::{PathBuf, Path};
 use std::fs;
+use std::ffi::OsStr;
 
 fn is_pic(path: &PathBuf) -> bool {
     path.extension()
@@ -14,12 +15,14 @@ pub(crate) struct ImageStorage {
 
 impl ImageStorage {
     pub(crate) fn new(path: &Path) -> Result<ImageStorage, String> {
-        let data: Vec<PathBuf> = fs::read_dir(path)
+        let mut data: Vec<PathBuf> = fs::read_dir(path)
             .map_err(|e| e.to_string())?
             .into_iter()
             .map(|entry| entry.expect("Error").path())
             .filter(is_pic)
             .collect();
+
+        data.sort_by_key(|path| path.file_name().and_then(OsStr::to_str).expect("Error").to_lowercase());
 
         if data.len() < 1 {
             Err("No images".to_string())
