@@ -1,5 +1,6 @@
 use crate::image_storage::ImageStorage;
 
+use clap::{crate_authors, crate_description, crate_name, crate_version, App, Arg};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::path::{Path, PathBuf};
@@ -9,13 +10,23 @@ mod gui;
 mod image_storage;
 
 pub fn run() -> Result<(), String> {
-    let args: Vec<_> = env::args().collect();
+    let app = App::new(crate_name!())
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about(crate_description!())
+        .arg(
+            Arg::new("path")
+                .about("path of directory with pictures to sort")
+                .index(1)
+                .required(true),
+        );
 
-    let path = if args.len() < 2 {
-        env::current_dir().map_err(|e| e.to_string())?
-    } else {
-        Path::new(&args[1]).to_path_buf()
-    };
+    let matches = app.get_matches();
+
+    let path = matches
+        .value_of_t::<PathBuf>("path")
+        .or(env::current_dir())
+        .map_err(|e| e.to_string())?;
 
     run_internal(path.as_path())
 }
