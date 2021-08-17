@@ -1,6 +1,6 @@
-use std::path::{PathBuf, Path};
-use std::fs;
 use std::ffi::OsStr;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 fn is_pic(path: &PathBuf) -> bool {
     path.extension()
@@ -22,7 +22,12 @@ impl ImageStorage {
             .filter(is_pic)
             .collect();
 
-        data.sort_by_key(|path| path.file_name().and_then(OsStr::to_str).expect("Error").to_lowercase());
+        data.sort_by_key(|path| {
+            path.file_name()
+                .and_then(OsStr::to_str)
+                .expect("Error")
+                .to_lowercase()
+        });
 
         if data.is_empty() {
             Err("No images".to_string())

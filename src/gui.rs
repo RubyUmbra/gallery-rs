@@ -1,8 +1,8 @@
-use sdl2::render::{WindowCanvas, TextureCreator};
-use sdl2::rect::Rect;
-use sdl2::video::{WindowContext};
 use sdl2::image::{InitFlag, LoadTexture};
-use sdl2::{Sdl};
+use sdl2::rect::Rect;
+use sdl2::render::{TextureCreator, WindowCanvas};
+use sdl2::video::WindowContext;
+use sdl2::Sdl;
 use std::path::Path;
 
 pub(crate) struct GuiContext {
@@ -36,20 +36,17 @@ impl GuiContext {
             .map_err(|e| e.to_string())?;
         let texture_creator = canvas.texture_creator();
 
-        Ok(
-            GuiContext {
-                sdl_context,
-                display_bounds,
-                canvas,
-                texture_creator,
-            }
-        )
+        Ok(GuiContext {
+            sdl_context,
+            display_bounds,
+            canvas,
+            texture_creator,
+        })
     }
 
     pub(crate) fn render_pic(&mut self, path: &Path) -> Result<(), String> {
         let texture = self.texture_creator.load_texture(path)?;
-        let img_sz = imagesize::size(path)
-            .map_err(|e| e.to_string())?;
+        let img_sz = imagesize::size(path).map_err(|e| e.to_string())?;
 
         let mut img = Rect::new(0, 0, img_sz.width as u32, img_sz.height as u32);
         let dx = self.display_bounds.width() as u32;
