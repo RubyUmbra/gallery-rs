@@ -16,9 +16,10 @@ impl GuiContext {
     pub(crate) fn new() -> Result<GuiContext, String> {
         let sdl_context = sdl2::init()?;
         let video_subsystem = sdl_context.video()?;
-        match video_subsystem.num_video_displays() {
-            Ok(num) => { if num < 1 { return Err("No displays".to_string()); } }
-            Err(_) => {}
+        if let Ok(num) = video_subsystem.num_video_displays() {
+            if num < 1 {
+                return Err("No displays".to_string());
+            }
         }
         let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG)?;
         let display_bounds = video_subsystem.display_bounds(0)?;

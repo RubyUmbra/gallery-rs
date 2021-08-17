@@ -24,7 +24,7 @@ impl ImageStorage {
 
         data.sort_by_key(|path| path.file_name().and_then(OsStr::to_str).expect("Error").to_lowercase());
 
-        if data.len() < 1 {
+        if data.is_empty() {
             Err("No images".to_string())
         } else {
             Ok(ImageStorage { data, current: 0 })
