@@ -1,3 +1,9 @@
+#![recursion_limit = "1024"]
+
+#[macro_use]
+extern crate error_chain;
+
+use crate::errors::*;
 use crate::image_storage::ImageStorage;
 
 use clap::{crate_authors, crate_description, crate_name, crate_version, App, Arg};
@@ -6,10 +12,11 @@ use sdl2::keyboard::Keycode;
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 
+pub mod errors;
 mod gui;
 mod image_storage;
 
-pub fn run() -> Result<(), String> {
+pub fn run() -> Result<()> {
     let app = App::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
@@ -25,18 +32,17 @@ pub fn run() -> Result<(), String> {
 
     let path = matches
         .value_of_t::<PathBuf>("path")
-        .or(env::current_dir())
-        .map_err(|e| e.to_string())?;
+        .or_else(|_| env::current_dir())?;
 
     run_internal(path.as_path())
 }
 
-fn run_internal(path: &Path) -> Result<(), String> {
+fn run_internal(path: &Path) -> Result<()> {
     let mut storage: ImageStorage = ImageStorage::new(path)?;
 
     let mut del = PathBuf::from(path);
     del.push("del");
-    fs::create_dir_all(del.as_path()).map_err(|e| e.to_string())?;
+    fs::create_dir_all(del.as_path())?;
 
     let mut gui_context = gui::GuiContext::new()?;
 
@@ -69,7 +75,7 @@ fn run_internal(path: &Path) -> Result<(), String> {
                 _ => {}
             }
             if storage.is_empty() {
-                return Err("No images".to_string());
+                return Err("No images".into());
             }
             gui_context.render_pic(storage.get().as_path())?;
         }

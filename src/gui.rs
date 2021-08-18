@@ -1,3 +1,4 @@
+use crate::errors::*;
 use sdl2::image::{InitFlag, LoadTexture};
 use sdl2::rect::Rect;
 use sdl2::render::{TextureCreator, WindowCanvas};
@@ -13,12 +14,12 @@ pub(crate) struct GuiContext {
 }
 
 impl GuiContext {
-    pub(crate) fn new() -> Result<GuiContext, String> {
+    pub(crate) fn new() -> Result<GuiContext> {
         let sdl_context = sdl2::init()?;
         let video_subsystem = sdl_context.video()?;
         if let Ok(num) = video_subsystem.num_video_displays() {
             if num < 1 {
-                return Err("No displays".to_string());
+                return Err("No displays".into());
             }
         }
         let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG)?;
@@ -27,13 +28,8 @@ impl GuiContext {
             .window("Gallery", display_bounds.width(), display_bounds.height())
             .fullscreen()
             .position_centered()
-            .build()
-            .map_err(|e| e.to_string())?;
-        let canvas = window
-            .into_canvas()
-            .software()
-            .build()
-            .map_err(|e| e.to_string())?;
+            .build()?;
+        let canvas = window.into_canvas().software().build()?;
         let texture_creator = canvas.texture_creator();
 
         Ok(GuiContext {
@@ -44,9 +40,9 @@ impl GuiContext {
         })
     }
 
-    pub(crate) fn render_pic(&mut self, path: &Path) -> Result<(), String> {
+    pub(crate) fn render_pic(&mut self, path: &Path) -> Result<()> {
         let texture = self.texture_creator.load_texture(path)?;
-        let img_sz = imagesize::size(path).map_err(|e| e.to_string())?;
+        let img_sz = imagesize::size(path)?;
 
         let mut img = Rect::new(0, 0, img_sz.width as u32, img_sz.height as u32);
         let dx = self.display_bounds.width() as u32;
