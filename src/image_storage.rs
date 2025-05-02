@@ -3,7 +3,7 @@ use std::ffi::OsStr;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-fn is_pic(path: &PathBuf) -> bool {
+fn is_pic(path: &Path) -> bool {
     path.extension()
         .map(|ext| ext == "png" || ext == "jpg")
         .unwrap_or(false)
@@ -17,9 +17,8 @@ pub(crate) struct ImageStorage {
 impl ImageStorage {
     pub(crate) fn new(path: &Path) -> Result<ImageStorage> {
         let mut data: Vec<PathBuf> = fs::read_dir(path)?
-            .into_iter()
             .filter_map(|res| res.map(|entry| entry.path()).ok())
-            .filter(is_pic)
+            .filter(|path| is_pic(path))
             .collect();
 
         data.sort_by_key(|path| {

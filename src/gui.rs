@@ -45,26 +45,26 @@ impl GuiContext {
         let img_sz = imagesize::size(path)?;
 
         let mut img = Rect::new(0, 0, img_sz.width as u32, img_sz.height as u32);
-        let dx = self.display_bounds.width() as u32;
-        let dy = self.display_bounds.height() as u32;
+        let dx = self.display_bounds.width();
+        let dy = self.display_bounds.height();
         if dx < img.width() && dy < img.height() || dx > img.width() && dy > img.height() {
-            let new_width = (img.width() * dy / img.height()) as u32;
-            let new_height = (img.height() * dx / img.width()) as u32;
+            let new_width = img.width() * dy / img.height();
+            let new_height = img.height() * dx / img.width();
             if new_height < dy {
-                img.set_width(dx as u32);
+                img.set_width(dx);
                 img.set_height(new_height);
             } else {
                 img.set_width(new_width);
-                img.set_height(dy as u32);
+                img.set_height(dy);
             }
         } else if dx < img.width() && dy > img.height() {
-            let new_height = (img.height() * dx / img.width()) as u32;
-            img.set_width(dx as u32);
+            let new_height = img.height() * dx / img.width();
+            img.set_width(dx);
             img.set_height(new_height);
         } else if dx > img.width() && dy < img.height() {
-            let new_width = (img.width() * dy / img.height()) as u32;
+            let new_width = img.width() * dy / img.height();
             img.set_width(new_width);
-            img.set_height(dy as u32);
+            img.set_height(dy);
         }
 
         let x_pad = (dx - img.width()) / 2;

@@ -53,23 +53,23 @@ fn run_internal(path: &Path) -> Result<()> {
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
-                    keycode: Option::Some(Keycode::Escape),
+                    keycode: Some(Keycode::Escape),
                     ..
                 }
                 | Event::KeyDown {
-                    keycode: Option::Some(Keycode::Q),
+                    keycode: Some(Keycode::Q),
                     ..
                 } => break 'mainloop,
                 Event::KeyDown {
-                    keycode: Option::Some(Keycode::Right),
+                    keycode: Some(Keycode::Right),
                     ..
                 } => storage.next(),
                 Event::KeyDown {
-                    keycode: Option::Some(Keycode::Left),
+                    keycode: Some(Keycode::Left),
                     ..
                 } => storage.prev(),
                 Event::KeyDown {
-                    keycode: Option::Some(Keycode::Space),
+                    keycode: Some(Keycode::Space),
                     ..
                 } => storage.mv(del.as_path()),
                 _ => {}
