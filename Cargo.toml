@@ -2,16 +2,18 @@
 name = "gallery-rs"
 version = "0.1.0"
 authors = ["RubyUmbra <rubyumbra@gmail.com>"]
-edition = "2018"
+edition = "2024"
 description = "Image sorting application."
 
 [dependencies]
-glob = "0.3.0"
-imagesize = "0.8.8"
-clap = "3.0.0-beta.4"
+imagesize = "0.14.0"
 error-chain = "0.12.4"
 
+[dependencies.clap]
+version = "4.5.37"
+features = ["cargo"]
+
 [dependencies.sdl2]
-version = "0.34.5"
+version = "0.37.0"
 default-features = false
 features = ["image"]

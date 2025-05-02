@@ -6,7 +6,7 @@ extern crate error_chain;
 use crate::errors::*;
 use crate::image_storage::ImageStorage;
 
-use clap::{crate_authors, crate_description, crate_name, crate_version, App, Arg};
+use clap::{crate_authors, crate_description, crate_name, crate_version, Arg, Command};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::path::{Path, PathBuf};
@@ -17,22 +17,25 @@ mod gui;
 mod image_storage;
 
 pub fn run() -> Result<()> {
-    let app = App::new(crate_name!())
+    let app = Command::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
         .about(crate_description!())
         .arg(
             Arg::new("path")
-                .about("path of directory with pictures to sort")
+                .help("path of directory with pictures to sort")
                 .index(1)
-                .required(true),
+                .required(true)
+                .value_parser(clap::value_parser!(PathBuf)),
         );
 
     let matches = app.get_matches();
 
     let path = matches
-        .value_of_t::<PathBuf>("path")
-        .or_else(|_| env::current_dir())?;
+        .get_one::<PathBuf>("path")
+        .cloned()
+        .ok_or("")
+        .or(env::current_dir())?;
 
     run_internal(path.as_path())
 }
