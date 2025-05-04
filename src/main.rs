@@ -1,6 +1,6 @@
-#![recursion_limit = "1024"]
-
-#[macro_use]
-extern crate error_chain;
-
-quick_main!(gallery_rs::run);
+fn main() {
+    match gallery_rs::run() {
+        Ok(()) => (),
+        Err(e) => eprintln!("Error: {}", e),
+    }
+}

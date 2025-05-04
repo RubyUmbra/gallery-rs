@@ -1,8 +1,3 @@
-#![recursion_limit = "1024"]
-
-#[macro_use]
-extern crate error_chain;
-
 use crate::errors::*;
 use crate::image_storage::ImageStorage;
 
