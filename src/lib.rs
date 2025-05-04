@@ -1,41 +1,16 @@
 use crate::errors::*;
 use crate::image_storage::ImageStorage;
 
-use clap::{crate_authors, crate_description, crate_name, crate_version, Arg, Command};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use std::path::{Path, PathBuf};
-use std::{env, fs};
+use std::fs;
 
 pub mod errors;
 mod gui;
 mod image_storage;
 
-pub fn run() -> Result<()> {
-    let app = Command::new(crate_name!())
-        .version(crate_version!())
-        .author(crate_authors!())
-        .about(crate_description!())
-        .arg(
-            Arg::new("path")
-                .help("path of directory with pictures to sort")
-                .index(1)
-                .required(true)
-                .value_parser(clap::value_parser!(PathBuf)),
-        );
-
-    let matches = app.get_matches();
-
-    let path = matches
-        .get_one::<PathBuf>("path")
-        .cloned()
-        .ok_or("")
-        .or(env::current_dir())?;
-
-    run_internal(path.as_path())
-}
-
-fn run_internal(path: &Path) -> Result<()> {
+pub fn run(path: &Path) -> Result<()> {
     let mut storage: ImageStorage = ImageStorage::new(path)?;
 
     let mut del = PathBuf::from(path);
