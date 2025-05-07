@@ -47,7 +47,7 @@ impl ImageStorage {
         }
     }
 
-    pub(crate) fn get(&self) -> &PathBuf {
+    pub(crate) fn get(&self) -> &Path {
         &self.data[self.current]
     }
 
@@ -55,7 +55,7 @@ impl ImageStorage {
         if !self.data.is_empty() {
             let mut new = path.to_path_buf();
             new.push(self.get().file_name().expect("Error"));
-            fs::rename(self.get().as_path(), new).expect("Error");
+            fs::rename(self.get(), new).expect("Error");
             self.data.remove(self.current);
             if !self.data.is_empty() {
                 self.current %= self.data.len();

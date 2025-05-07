@@ -1,9 +1,9 @@
 use crate::errors::*;
+use sdl2::Sdl;
 use sdl2::image::{InitFlag, LoadTexture};
 use sdl2::rect::Rect;
 use sdl2::render::{TextureCreator, WindowCanvas};
 use sdl2::video::WindowContext;
-use sdl2::Sdl;
 use std::path::Path;
 
 pub(crate) struct GuiContext {
