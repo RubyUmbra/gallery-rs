@@ -11,7 +11,7 @@ pub enum AppError {
     #[error(transparent)]
     TextureValue(#[from] sdl2::render::TextureValueError),
     #[error(transparent)]
-    Image(#[from] imagesize::ImageError),
+    Image(#[from] image::ImageError),
     #[error("ERROR: {0}")]
     Other(String),
 }

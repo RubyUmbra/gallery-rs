@@ -6,7 +6,7 @@ edition = "2024"
 description = "Image sorting application."
 
 [dependencies]
-imagesize = "0.14.0"
+image = "0.25.6"
 thiserror = "2.0.12"
 
 [dependencies.clap]

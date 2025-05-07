@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 fn is_pic(path: &Path) -> bool {
     path.extension()
-        .map(|ext| ext == "png" || ext == "jpg")
+        .map(|ext| ext == "png" || ext == "webp" || ext == "jpg")
         .unwrap_or(false)
 }
 
